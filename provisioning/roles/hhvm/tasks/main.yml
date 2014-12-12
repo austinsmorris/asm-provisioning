@@ -1,0 +1,20 @@
+---
+- name: Get repo key
+  sudo: yes
+  apt_key: url=http://dl.hhvm.com/conf/hhvm.gpg.key state=present
+  tags: hhvm
+
+- name: Create source list
+  sudo: yes
+  apt_repository: repo='deb http://dl.hhvm.com/ubuntu trusty main' state=present update_cache=yes
+  tags: hhvm
+
+- name: Install HHVM
+  sudo: yes
+  apt: name=hhvm state=present
+  tags: hhvm
+
+- name: Start HHVM
+  sudo: yes
+  service: name=hhvm state=restarted
+  tags: hhvm

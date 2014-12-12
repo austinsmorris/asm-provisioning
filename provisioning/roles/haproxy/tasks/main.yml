@@ -1,0 +1,55 @@
+---
+- name: HAProxy | Install HAProxy
+  sudo: yes
+  apt: name=haproxy state=present
+  tags: haproxy
+
+- name: HAProxy | Save original daemon defaults
+  sudo: yes
+  command: mv /etc/default/haproxy /etc/default/haproxy.orginal creates=/etc/default/haproxy.orginal
+  tags: haproxy
+
+- name: HAProxy | Setup daemon defaults
+  sudo: yes
+  template: src=haproxy dest=/etc/default/
+  tags: haproxy
+
+- name: HAProxy | Save original configuration
+  sudo: yes
+  command: mv /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.orginal creates=/etc/haproxy/haproxy.cfg.orginal
+  tags: haproxy
+
+- name: HAProxy | Setup configuration
+  sudo: yes
+  template: src=haproxy.cfg dest=/etc/haproxy/
+  tags: haproxy
+
+- name: HAProxy | Install hatop
+  sudo: yes
+  apt: name=hatop state=present
+  tags: haproxy
+
+- name: HAProxy | Start HAProxy
+  sudo: yes
+  service: name=haproxy state=started
+  tags: haproxy
+
+- name: HAProxy | Install nf_conntrack_ipv4 linux module
+  sudo: yes
+  lineinfile: dest=/etc/modules state=present insertafter=EOF line="nf_conntrack_ipv4"
+  tags: haproxy
+
+- name: HAProxy | Setup linux tuning config
+  sudo: yes
+  template: src=haproxy-tuning.conf dest=/etc/sysctl.d/
+  tags: haproxy
+
+- name: HAProxy | Increase soft file limits
+  sudo: yes
+  lineinfile: dest=/etc/security/limits.conf state=present insertafter=EOF line="* soft nofile 999999"
+  tags: haproxy
+
+- name: HAProxy | Increase hard file limits
+  sudo: yes
+  lineinfile: dest=/etc/security/limits.conf state=present insertafter=EOF line="* hard nofile 999999"
+  tags: haproxy

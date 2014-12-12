@@ -1,0 +1,40 @@
+---
+- name: Get repo key
+  sudo: yes
+  apt_key: url=https://repo.varnish-cache.org/ubuntu/GPG-key.txt state=present
+  tags: varnish
+
+- name: Create source list
+  sudo: yes
+  apt_repository: repo='deb https://repo.varnish-cache.org/ubuntu trusty varnish-4.0' state=present update_cache=yes
+  tags: varnish
+
+- name: Install Varnish
+  sudo: yes
+  apt: name=varnish state=present
+  tags: varnish
+
+- name: Save original daemon defaults
+  sudo: yes
+  command: mv /etc/default/varnish /etc/default/varnish.orginal creates=/etc/default/varnish.orginal
+  tags: varnish
+
+- name: Setup daemon defaults
+  sudo: yes
+  template: src=varnish dest=/etc/default/
+  tags: varnish
+
+- name: Save original configuration
+  sudo: yes
+  command: mv /etc/varnish/default.vcl /etc/varnish/default.vcl.orginal creates=/etc/varnish/default.vcl.orginal
+  tags: varnish
+
+- name: Setup configuration
+  sudo: yes
+  template: src=default.vcl dest=/etc/varnish/
+  tags: varnish
+
+- name: Restart Varnish
+  sudo: yes
+  service: name=varnish state=restarted
+  tags: varnish

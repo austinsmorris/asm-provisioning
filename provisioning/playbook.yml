@@ -1,0 +1,11 @@
+---
+- hosts: all
+  user: vagrant
+
+  roles:
+    - upgrade
+    - hhvm
+    - nginx
+    - varnish
+    - haproxy
+    - restart

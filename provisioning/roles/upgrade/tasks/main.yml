@@ -1,0 +1,5 @@
+---
+- name: Upgrade Ubuntu packages
+  sudo: yes
+  apt: upgrade=yes update_cache=yes
+  tags: upgrade

@@ -1,0 +1,5 @@
+---
+- name: Restart server
+  sudo: yes
+  command: shutdown -r now
+  tags: restart
