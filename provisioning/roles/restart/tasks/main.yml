@@ -1,5 +1,13 @@
 ---
 - name: Restart server
   sudo: yes
-  command: shutdown -r now
+  command: shutdown -r now "Ansible triggered a server restart"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  tags: restart
+
+- name: waiting for server to come back
+  sudo: no
+  local_action: wait_for host={{ inventory_hostname }} state=started
   tags: restart
