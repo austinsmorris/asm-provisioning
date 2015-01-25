@@ -1,0 +1,15 @@
+---
+- name: Start php-fpm
+  sudo: yes
+  service: name=php5-fpm enabled=yes state=started
+  tags: php
+
+- name: Restart php-fpm
+  sudo: yes
+  service: name=php5-fpm state=restarted
+  tags: php
+
+- name: Reload php-fpm
+  sudo: yes
+  service: name=php5-fpm state=reloaded
+  tags: php
