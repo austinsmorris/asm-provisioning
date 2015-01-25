@@ -1,0 +1,41 @@
+---
+- name: Install php-fpm
+  sudo: yes
+  apt: name=php5-fpm state=latest
+  notify:
+    - Start php-fpm
+  tags: php
+
+- name: Save the orginal default php-fpm configuration
+  sudo: yes
+  command: mv /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.original creates=/etc/php5/fpm/pool.d/www.conf.original
+  tags: php
+
+- name: Set the timezone in the fpm php.ini
+  sudo: yes
+  lineinfile: dest=/etc/php5/fpm/php.ini regexp='^date.timezone' line='date.timezone = UTC' insertafter='^;date.timezone'
+  tags: php
+
+- name: Install php cli
+  sudo: yes
+  apt: name=php5-cli state=latest
+  tags: php
+
+- name: Set the timezone in the cli php.ini
+  sudo: yes
+  lineinfile: dest=/etc/php5/cli/php.ini regexp='^date.timezone' line='date.timezone = UTC' insertafter='^;date.timezone'
+  tags: php
+
+#- name: Allow <username> to sudo service php-fpm reload without a password
+#  sudo: yes
+#  lineinfile: "dest=/etc/sudoers state=present regexp='^username ALL=NOPASSWD: /usr/sbin/service php5-fpm reload$' line='username ALL=NOPASSWD: /usr/sbin/service php5-fpm reload' validate='visudo -cf %s'"
+#  tags:
+#    - php
+#    - users
+#    - <username>
+
+- name: Install the php5-mysql extension
+  sudo: yes
+  apt: name=php5-mysql state=latest
+  notify: Restart php-fpm
+  tags: php
